@@ -130,3 +130,135 @@ sites <- sites %>%
 test_join <- full_join(animals, sites, by = c("location" = "place"))
 ```
 
+
+## Lubridate is a very useful package ----
+
+```{r}
+my_date <- "03-05-1998"
+lubridate::mdy(my_date)
+
+my_date <- "11/7/2003"
+lubridate::mdy(my_date)
+
+my_date <- "08-jun-1991"
+lubridate::dmy(my_date)
+
+my_date <- "19960518"
+lubridate::ymd(my_date)
+```
+
+# Can Lubridate Fail?
+
+```{r}
+lubridate::mdy("1950-08-30")
+
+lubridate::dmy("09/12/84")
+```
+
+```{r}
+time <- "2020-08-12 11:18"
+time_lub <- lubridate::ymd_hm(time) # MAKE SURE TO DEAL WITH UTC AND DIFFERENT TIME ZONES, WILL NEED TO SPECIFY
+class(time_lub)
+
+with_tz(time_lub, "America/Los_Angeles") # with_tz (with time zone) function so you can add time zones
+with_tz(time_lub, "Australia/Sydney")
+```
+
+## Pulling out different elements of time
+
+```{r}
+my_time <- lubridate::ymd_hms(time_lub)
+
+week(my_time)
+
+hour(my_time)
+
+day(my_time) ## These small functions will allow you to pull out dates, times, etc. from data sets to use
+
+minute(my_time) ## Will allow to visualize better, ex) using filter(), group_by(), mutate(), etc. 
+
+year(my_time)
+```
+
+```{r}
+comp_time_start <- Sys.time() ## using this code is good for telling how long your code takes to run completely 
+comp_time_end <- Sys.time()
+
+comp_time_end - comp_time_start
+```
+
+```{r}
+urchin_counts <- tribble(
+  ~date, ~species, ~size_mm,
+  "10/3/2020", "purple", 55,
+  "10/4/2020", "red", 48,
+  "11/17/2020", "red", 67
+)
+
+urchin_counts <- urchin_counts %>% 
+  mutate(date = lubridate::mdy(date)) %>% 
+  mutate(year = year(date),
+         month = month(date),
+         day = day(date))
+
+urchin_counts %>% 
+  group_by(year) %>% 
+  summarize(total = n())
+```
+
+```{r}
+day_1 <- lubridate::ymd("2020-01-06")
+day_2 <- lubridate::ymd("2020-05-18")
+day_3 <- lubridate::ymd("2024-08-19")
+
+time_interval <- interval(day_1, day_2)
+
+time_length(time_interval, "day")
+
+time_length(interval(day_2, day_3), "year")
+```
+
+
+```{r}
+my_string <- "Teddy loves eating salmon and socks."
+
+my_string %>% 
+  str_detect("love")
+
+my_string <- c("burrito", "fish taco", "Taco salad")
+
+my_string %>% 
+  str_detect("Taco")
+```
+
+```{r}
+skywalkers <- starwars %>% 
+  filter(str_detect(name, "Skywalker")) ## looking in column 'name' for "Skywalker" , must identify column looking in within data
+```
+
+```{r}
+firewalkers <- starwars %>% 
+  mutate(name = str_replace(name,   ## name is column (variable) we want to look in, 'pattern' is what we looking to replace
+                            pattern = "Sky", 
+                            replacement = "Fire"))
+```
+
+## Str functions ----
+```{r}
+feedback <- c(" I ate  some  nachos", "Wednesday morning   ")
+
+str_squish(feedback) # Squishes spaces into a normal line 
+
+str_trim(feedback) # gets rid of spaces in back and front
+
+str_to_lower(feedback)
+
+str_to_upper(feedback)
+
+str_to_title(feedback)
+
+str_to_sentence(feedback)
+
+str_count(feedback, pattern = "nachos")
+```
+

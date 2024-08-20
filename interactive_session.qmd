@@ -13,3 +13,48 @@ library(palmerpenguins)
 library(lubridate)
 ```
 
+## Data Wrangling refresher
+
+# Refresher 1:
+
+```{r}
+#read in data 
+
+penguins_data <- penguins
+
+penguins_bis_dre <- penguins_data %>% 
+  filter(island == c("Biscoe", "Dream islands")) %>% # better to do %in% instead of ==
+  subset(select = -c(year, sex)) %>%      ## easier to do select(-year, sex)
+  mutate(body_mass_kg = body_mass_g / 1000) %>% 
+  rename(location = island)
+
+
+```
+
+# Refresher 2 
+
+```{r}
+
+# Correct Code
+
+penguins_cor <- penguins_data %>% 
+  filter(species %in% c("Adelie") & !is.na(flipper_length_mm)) %>% 
+  group_by(sex) %>% 
+  summarize(mean_flipper_length = mean(flipper_length_mm, na.rm = TRUE),
+            sd_flipper = sd(flipper_length_mm, na.rm = TRUE),
+            sample_size = n())
+
+
+
+
+
+## My own code
+
+penguins2 <- penguins_data %>% 
+  filter(species == "Adelie") %>% 
+  group_by(sex) %>% 
+  select(flipper_length_mm = !is.na(flipper_length_mm))
+  
+  subset(select = !is.na(flipper_length_mm))
+```
+

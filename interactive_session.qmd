@@ -11,6 +11,7 @@ editor_options:
 library(tidyverse)
 library(palmerpenguins)
 library(lubridate)
+library(datapasta)
 ```
 
 ## Data Wrangling refresher
@@ -31,7 +32,7 @@ penguins_bis_dre <- penguins_data %>%
 
 ```
 
-# Refresher 2 
+# Refresher 2
 
 ```{r}
 
@@ -56,5 +57,76 @@ penguins2 <- penguins_data %>%
   select(flipper_length_mm = !is.na(flipper_length_mm))
   
   subset(select = !is.na(flipper_length_mm))
+```
+
+
+```{r}
+animals <- tibble::tribble(
+  ~location,   ~species,  ~maturity,
+   "lagoon",   "bobcat",    "adult",
+    "bluff",   "coyote", "juvenile",
+    "creek",      "fox",    "adult",
+     "oaks", "squirrel", "juvenile",
+    "bluff",   "bobcat",    "adult"
+  )
+
+
+sites <- tibble::tribble(
+  ~location,      ~full_site_name, ~jurisdiction,
+    "beach",       "Goleta Beach",     "SB City",
+   "lagoon",        "UCSB Lagoon",        "UCSB",
+    "bluff",       "Ellwood Mesa",     "SB City",
+     "oaks", "Fremont Campground",        "USFS"
+  )
+
+```
+
+## Full Join
+
+```{r}
+full_join_ex <- full_join(animals, sites)
+```
+
+## Left Join
+
+```{r}
+left_join_ex <- left_join(animals, sites)
+```
+
+## Right Join
+
+```{r}
+right_join_ex <- right_join(animals, sites)
+```
+
+## Inner Join
+
+```{r}
+inner_join_ex <- inner_join(animals, sites)
+```
+
+## Semi Join
+
+```{r}
+semi_join_ex <- semi_join(animals, sites)
+
+semi_join_test <- animals %>% 
+  filter(location %in% sites$location)
+```
+
+## Anti Join
+
+```{r}
+anti_join_ex <- anti_join(animals, sites)
+
+anti_join_test <- animals %>% 
+  filter(!location %in% sites$location)
+```
+
+```{r}
+sites <- sites %>% 
+  rename(place = location)
+
+test_join <- full_join(animals, sites, by = c("location" = "place"))
 ```
 
